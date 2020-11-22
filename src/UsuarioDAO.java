@@ -28,9 +28,9 @@ public class UsuarioDAO {
             while (rs.next()) {
                 // Criando e populando os objetos Usuario
                 Usuario usuario = new Usuario();
-                usuario.setId(rs.getInt("ID"));
-                usuario.setNome(rs.getString("NOME"));
-                usuario.setSenha(rs.getString("SENHA"));
+                usuario.setId(rs.getInt("ID_USUARIO"));
+                usuario.setNome(rs.getString("NOME_USUARIO"));
+                usuario.setSenha(rs.getString("SENHA_USUARIO"));
 
                 // Adicionando o objeto à lista
                 usuarios.add(usuario);
@@ -59,9 +59,9 @@ public class UsuarioDAO {
 
             while (rs.next()) {
                 // Populando o único objeto Usuario
-                usuario.setId(rs.getInt("ID"));
-                usuario.setNome(rs.getString("NOME"));
-                usuario.setSenha(rs.getString("SENHA"));
+                usuario.setId(rs.getInt("ID_USUARIO"));
+                usuario.setNome(rs.getString("NOME_USUARIO"));
+                usuario.setSenha(rs.getString("SENHA_USUARIO"));
             }
             rs.close();
             stmt.close();
@@ -76,7 +76,7 @@ public class UsuarioDAO {
     // Adiciona o usuário no banco de dados e retorna o próprio usuário com o ID atrelado
     public Usuario adiciona(Usuario usuario) {
         String sql = "insert into usuario " +
-                        "(nome,senha) " +
+                        "(nome_usuario,senha_usuario) " +
                         "values (?,?)";
 
         try {
@@ -88,7 +88,7 @@ public class UsuarioDAO {
             stmt.execute();
 
             // Segunda string para recuperar o objeto usuário do banco
-            String sqlSelect = "select * from usuario where NOME=?";
+            String sqlSelect = "select * from usuario where NOME_USUARIO=?";
             PreparedStatement stmtSelect = this.connection.prepareStatement(sqlSelect);
             stmtSelect.setString(1, usuario.getNome());
 
@@ -97,9 +97,9 @@ public class UsuarioDAO {
 
             while (rs.next()) {
                 // criando o objeto Usuario
-                usuario.setId(rs.getInt("ID"));
-                usuario.setNome(rs.getString("NOME"));
-                usuario.setSenha(rs.getString("SENHA"));
+                usuario.setId(rs.getInt("ID_USUARIO"));
+                usuario.setNome(rs.getString("NOME_USUARIO"));
+                usuario.setSenha(rs.getString("SENHA_USUARIO"));
             }
 
             rs.close();
@@ -115,7 +115,7 @@ public class UsuarioDAO {
 
     // Altera um usuário no banco de dados
     public void altera(Usuario usuario) {
-        String sql = "update usuario set nome=?, senha=? where id=?";
+        String sql = "update usuario set nome_usuario=?, senha_usuario=? where id_usuario=?";
 
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -135,8 +135,8 @@ public class UsuarioDAO {
     // Remove um usuário do banco de dados
     public void remove(Usuario usuario) {
         try {
-            PreparedStatement stmt = connection.prepareStatement("delete from usuario where id=?");
-            stmt.setLong(1, usuario.getId());
+            PreparedStatement stmt = connection.prepareStatement("delete from usuario where id_usuario=?");
+            stmt.setInt(1, usuario.getId());
 
             stmt.execute();
             stmt.close();

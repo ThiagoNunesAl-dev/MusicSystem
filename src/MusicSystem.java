@@ -11,6 +11,8 @@ public class MusicSystem {
 
             // criação dos DAOs
             UsuarioDAO usuarioDAO = new UsuarioDAO(connection);
+            MusicaDAO musicaDAO = new MusicaDAO(connection);
+            GeneroMusicaDAO generoMusicaDAO = new GeneroMusicaDAO(connection);
 
         }
         catch(Exception e){
