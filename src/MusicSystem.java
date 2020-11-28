@@ -1,13 +1,12 @@
 import java.sql.Connection;
-import java.util.List;
 
 public class MusicSystem {
     public static void main(String[] args) throws Exception {
         Connection connection = null;
         try{
-            connection = new ConnectionFactory().getConnection();
+            connection = new ConnectionFactory().obterConexao();
 
-            System.out.println("Conectado!");
+            System.out.println("Conectado! Status: "+connection);
 
             // criação dos DAOs
             UsuarioDAO usuarioDAO = new UsuarioDAO(connection);

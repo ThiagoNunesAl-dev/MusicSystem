@@ -1,8 +1,8 @@
 public class Usuario {
 
     private Integer ID_USUARIO;
-    private String NOME_USUARIO;
-    private String SENHA_USUARIO;
+    public String NOME_USUARIO;
+    public String SENHA_USUARIO;
 
     // métodos get e set para id, nome, senha
 

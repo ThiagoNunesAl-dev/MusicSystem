@@ -15,7 +15,7 @@ public class UsuarioDAO {
         this.connection = connection;
     }
 
-
+    
     // Retorna uma lista com todos os usuários no banco de dados
     public List<Usuario> getLista() {
         try {
