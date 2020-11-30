@@ -3,7 +3,10 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 import java.awt.event.ActionEvent;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 public class TelaRecomendacoes {
 
@@ -16,6 +19,18 @@ public class TelaRecomendacoes {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static String listarMusicas () {
+		ConnectionFactory factory = new ConnectionFactory();
+		
+		Connection c = factory.obterConexao();
+		
+		MusicaDAO musicaDAO = new MusicaDAO(c);
+		
+		String musicas = musicaDAO.getLista().toString();
+
+		return musicas;
 	}
 
 	/**
@@ -43,8 +58,15 @@ public class TelaRecomendacoes {
 		
 		JLabel recomendacoesLabel = new JLabel("Quero recomendações!");
 		recomendacoesLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
-		recomendacoesLabel.setBounds(126, 11, 171, 23);
+		recomendacoesLabel.setBounds(131, 11, 171, 23);
 		frame.getContentPane().add(recomendacoesLabel);
+		
+		JScrollPane recomendacoesScrollPane = new JScrollPane();
+		recomendacoesScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		recomendacoesScrollPane.setBounds(85, 85, 260, 79);
+		frame.getContentPane().add(recomendacoesScrollPane);
+		JLabel musicas = new JLabel(listarMusicas());
+		recomendacoesScrollPane.setViewportView(musicas);
 	}
 
 }

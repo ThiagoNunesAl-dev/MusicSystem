@@ -37,7 +37,12 @@ public class TelaMenuPrincipal {
 		btnGeneros.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				TelaMeusGeneros generos = new TelaMeusGeneros();
-				generos.initialize(generos);
+				try {
+					generos.initialize(generos);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				generos.executar(generos);
 				
 				menu.frame.setVisible(false);

@@ -2,8 +2,7 @@ public class GeneroMusica {
 
     private Integer ID_GENERO;
     private String NOME_GENERO;
-
-
+    
     // métodos get e set para id, nome
 
     public String getNome() {

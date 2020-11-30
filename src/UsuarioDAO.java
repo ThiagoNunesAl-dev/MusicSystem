@@ -45,7 +45,7 @@ public class UsuarioDAO {
         }
     }
 
-    // Retorna o usuário do banco de dados com o nome especificado
+    // Retorna o usu�rio do banco de dados com o nome especificado
     public Usuario seleciona(String nome) {
         try {
             PreparedStatement stmt = this.connection.prepareStatement("select * from usuario where NOME=?");
@@ -58,7 +58,7 @@ public class UsuarioDAO {
             Usuario usuario = new Usuario();
 
             while (rs.next()) {
-                // Populando o único objeto Usuario
+                // Populando o objeto Usuario
                 usuario.setId(rs.getInt("ID_USUARIO"));
                 usuario.setNome(rs.getString("NOME_USUARIO"));
                 usuario.setSenha(rs.getString("SENHA_USUARIO"));
@@ -75,9 +75,7 @@ public class UsuarioDAO {
 
     // Adiciona o usuário no banco de dados e retorna o próprio usuário com o ID atrelado
     public Usuario adiciona(Usuario usuario) {
-        String sql = "insert into usuario " +
-                        "(nome_usuario,senha_usuario) " +
-                        "values (?,?)";
+        String sql = "insert into usuario (NOME_USUARIO, SENHA_USUARIO) values (?,?)";
 
         try {
             PreparedStatement stmt = this.connection.prepareStatement(sql);
@@ -86,25 +84,7 @@ public class UsuarioDAO {
             stmt.setString(2, usuario.getSenha());
 
             stmt.execute();
-
-            // Segunda string para recuperar o objeto usuário do banco
-            String sqlSelect = "select * from usuario where NOME_USUARIO=?";
-            PreparedStatement stmtSelect = this.connection.prepareStatement(sqlSelect);
-            stmtSelect.setString(1, usuario.getNome());
-
-            ResultSet rs = stmtSelect.executeQuery();
-
-
-            while (rs.next()) {
-                // criando o objeto Usuario
-                usuario.setId(rs.getInt("ID_USUARIO"));
-                usuario.setNome(rs.getString("NOME_USUARIO"));
-                usuario.setSenha(rs.getString("SENHA_USUARIO"));
-            }
-
-            rs.close();
             stmt.close();
-            stmtSelect.close();
 
             return usuario;
 
@@ -113,7 +93,7 @@ public class UsuarioDAO {
         }
     }
 
-    // Altera um usuário no banco de dados
+    // Altera um USU�RIO no banco de dados
     public void altera(Usuario usuario) {
         String sql = "update usuario set nome_usuario=?, senha_usuario=? where id_usuario=?";
 

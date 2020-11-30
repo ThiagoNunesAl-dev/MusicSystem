@@ -7,140 +7,124 @@ import java.util.List;
 
 public class GeneroMusicaDAO {
 
-    // Variável com a conexão com o banco de dados
-    private Connection connection;
+	// Variável com a conexão com o banco de dados
+	private Connection connection;
 
+	// Criação da Classe DAO, com a conexão do BD passada como parâmetro
+	public GeneroMusicaDAO(Connection connection) {
+		this.connection = connection;
+	}
 
-    // Criação da Classe DAO, com a conexão do BD passada como parâmetro
-    public GeneroMusicaDAO(Connection connection) {
-        this.connection = connection;
-    }
+	// Retorna uma lista com todos os g�neros no banco de dados
+	public List<String> getLista() {
+		try {
+			List<String> generoMusicas = new ArrayList<String>();
 
+			PreparedStatement stmt = this.connection.prepareStatement("select * from genero_musica");
 
-    // Retorna uma lista com todas as musicas no banco de dados
-    public List<GeneroMusica> getLista() {
-        try {
-            List<GeneroMusica> generoMusicas = new ArrayList<GeneroMusica>();
+			ResultSet rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				// Criando e populando os objetos G�neros
+				GeneroMusica generoMusica = new GeneroMusica();
+				// generoMusica.setId(rs.getInt("ID_GENERO"));
+				generoMusica.setNome(rs.getString("NOME_GENERO"));
 
-            PreparedStatement stmt = this.connection.prepareStatement("select * from genero_musica");
+				// Adicionando o objeto à lista
+				generoMusicas.add(generoMusica.getNome().toString());
+			}
+	
+			rs.close();
+			stmt.close();
+            
+			return generoMusicas;
+			
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-            ResultSet rs = stmt.executeQuery();
+	
 
-            while (rs.next()) {
-                // Criando e populando os objetos Musica
-                GeneroMusica generoMusica = new GeneroMusica();
-                generoMusica.setId(rs.getInt("ID_GENERO"));
-                generoMusica.setNome(rs.getString("NOME_GENERO"));
+	// Retorna uma música do banco de dados com o nome especificado
+	public GeneroMusica seleciona(String nome) {
+		try {
+			PreparedStatement stmt = this.connection
+					.prepareStatement("select * from genero_musica where NOME_GENERO=?");
 
-                // Adicionando o objeto à lista
-                generoMusicas.add(generoMusica);
-            }
-            rs.close();
-            stmt.close();
+			stmt.setString(1, nome);
 
-            return generoMusicas;
+			ResultSet rs = stmt.executeQuery();
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+			// Criando o objeto GeneroMusica
+			GeneroMusica generoMusica = new GeneroMusica();
 
-    // Retorna uma música do banco de dados com o nome especificado
-    public GeneroMusica seleciona(String nome) {
-        try {
-            PreparedStatement stmt = this.connection.prepareStatement("select * from genero_musica where NOME_GENERO=?");
+			while (rs.next()) {
+				// Populando o único objeto GeneroMusica
+				generoMusica.setId(rs.getInt("ID_GENERO"));
+				generoMusica.setNome(rs.getString("NOME_GENERO"));
 
-            stmt.setString(1, nome);
+			}
+			rs.close();
+			stmt.close();
 
-            ResultSet rs = stmt.executeQuery();
+			return generoMusica;
 
-            // Criando o objeto GeneroMusica
-            GeneroMusica generoMusica = new GeneroMusica();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-            while (rs.next()) {
-                // Populando o único objeto GeneroMusica
-                generoMusica.setId(rs.getInt("ID_GENERO"));
-                generoMusica.setNome(rs.getString("NOME_GENERO"));
+	// Adiciona o g�nero no banco de dados
+	public GeneroMusica adiciona(GeneroMusica generoMusica/*, Usuario usuario*/) {
+		String sql = "insert into genero_musica (NOME_GENERO) values (?);"/*+
+					 "insert into usuario_genero_musica (ID_USUARIO, ID_GENERO) values (?, ?)"*/;
 
-            }
-            rs.close();
-            stmt.close();
+		try {
+			PreparedStatement stmt = this.connection.prepareStatement(sql);
+			stmt.setString(1, generoMusica.getNome());
+			//stmt.setInt(2, usuario.getId());
+			//stmt.setInt(3, generoMusica.getId());
 
-            return generoMusica;
+			stmt.execute();
+			stmt.close();
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+			return generoMusica;
 
-    // Adiciona a música no banco de dados e retorna o próprio usuário com o ID atrelado
-    public GeneroMusica adiciona(GeneroMusica generoMusica) {
-        String sql = "insert into genero_musica " +
-                "(nome_genero) " +
-                "values (?)";
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-        try {
-            PreparedStatement stmt = this.connection.prepareStatement(sql);
+	// Altera uma música no banco de dados
+	public void altera(GeneroMusica generoMusica) {
+		String sql = "update genero_musica set nome_genero=? where id_genero=?";
 
-            stmt.setString(1, generoMusica.getNome());
+		try {
+			PreparedStatement stmt = connection.prepareStatement(sql);
 
+			stmt.setString(1, generoMusica.getNome());
+			stmt.setInt(3, generoMusica.getId());
 
-            stmt.execute();
+			stmt.execute();
+			stmt.close();
 
-            // Segunda string para recuperar o objeto usuário do banco
-            String sqlSelect = "select * from genero_musica where NOME_GENERO=?";
-            PreparedStatement stmtSelect = this.connection.prepareStatement(sqlSelect);
-            stmtSelect.setString(1, generoMusica.getNome());
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-            ResultSet rs = stmtSelect.executeQuery();
+	// Remove uma música do banco de dados
+	public void remove(GeneroMusica generoMusica) {
+		try {
+			PreparedStatement stmt = connection.prepareStatement("delete from genero_musica where NOME_GENERO = ?");
+			stmt.setString(1, generoMusica.getNome());
 
+			stmt.execute();
+			stmt.close();
 
-            while (rs.next()) {
-                // criando o objeto Usuario
-                generoMusica.setId(rs.getInt("ID_GENERO"));
-                generoMusica.setNome(rs.getString("NOME_GENERO"));
-            }
-
-            rs.close();
-            stmt.close();
-            stmtSelect.close();
-
-            return generoMusica;
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    // Altera uma música no banco de dados
-    public void altera(GeneroMusica generoMusica) {
-        String sql = "update genero_musica set nome_genero=? where id_genero=?";
-
-        try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
-
-            stmt.setString(1, generoMusica.getNome());
-            stmt.setInt(3, generoMusica.getId());
-
-            stmt.execute();
-            stmt.close();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    // Remove uma música do banco de dados
-    public void remove(GeneroMusica generoMusica) {
-        try {
-            PreparedStatement stmt = connection.prepareStatement("delete from genero_musica where id_genero=?");
-            stmt.setInt(1, generoMusica.getId());
-
-            stmt.execute();
-            stmt.close();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

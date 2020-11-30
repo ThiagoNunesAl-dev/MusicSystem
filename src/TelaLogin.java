@@ -95,7 +95,7 @@ public class TelaLogin {
 				String senha = senhaTextField.getText();
 				String usuario = userTextField.getText();
 				
-				String sql = "select * from usuario where NOME_USUARIO=? and SENHA_USUARIO=?";
+				String sql = "select * from usuario where NOME_USUARIO = ? and SENHA_USUARIO = ?";
 				
 				ConnectionFactory factory = new ConnectionFactory();
 				
@@ -111,7 +111,7 @@ public class TelaLogin {
 						TelaMenuPrincipal menu = new TelaMenuPrincipal();
 						menu.initialize(menu);
 						menu.executar(menu);
-						login.frame.setVisible(false);
+						frame.dispose();
 					} else {
 						JOptionPane.showMessageDialog(null, "Usuário ou senha não cadastrados!");
 					}

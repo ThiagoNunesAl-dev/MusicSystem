@@ -18,23 +18,23 @@ public class MusicaDAO {
 
 
     // Retorna uma lista com todas as musicas no banco de dados
-    public List<Musica> getLista() {
+    public List<String> getLista() {
         try {
-            List<Musica> musicas = new ArrayList<Musica>();
+            List<String> musicas = new ArrayList<String>();
 
-            PreparedStatement stmt = this.connection.prepareStatement("select * from musica");
+            PreparedStatement stmt = this.connection.prepareStatement("select * from musica ORDER BY NOTA_MUSICA DESC");
 
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
                 // Criando e populando os objetos Musica
                 Musica musica = new Musica();
-                musica.setId(rs.getInt("ID_MUSICA"));
                 musica.setNome(rs.getString("NOME_MUSICA"));
                 musica.setNota(rs.getFloat("NOTA_MUSICA"));
 
                 // Adicionando o objeto à lista
-                musicas.add(musica);
+                musicas.add(musica.getNome().toString());
+                musicas.add(musica.getNota().toString());    
             }
             rs.close();
             stmt.close();
@@ -76,9 +76,7 @@ public class MusicaDAO {
 
     // Adiciona a música no banco de dados e retorna o próprio usuário com o ID atrelado
     public Musica adiciona(Musica musica) {
-        String sql = "insert into musica " +
-                "(nome_musica,nota_musica) " +
-                "values (?,?)";
+        String sql = "insert into musica (NOME_MUSICA, NOTA_MUSICA) values (?,?)";
 
         try {
             PreparedStatement stmt = this.connection.prepareStatement(sql);
@@ -87,25 +85,7 @@ public class MusicaDAO {
             stmt.setFloat(2, musica.getNota());
 
             stmt.execute();
-
-            // Segunda string para recuperar o objeto usuário do banco
-            String sqlSelect = "select * from musica where NOME_MUSICA=?";
-            PreparedStatement stmtSelect = this.connection.prepareStatement(sqlSelect);
-            stmtSelect.setString(1, musica.getNome());
-
-            ResultSet rs = stmtSelect.executeQuery();
-
-
-            while (rs.next()) {
-                // criando o objeto Usuario
-                musica.setId(rs.getInt("ID_MUSICA"));
-                musica.setNome(rs.getString("NOME_MUSICA"));
-                musica.setNota(rs.getFloat("NOTA_MUSICA"));
-            }
-
-            rs.close();
             stmt.close();
-            stmtSelect.close();
 
             return musica;
 
@@ -136,8 +116,8 @@ public class MusicaDAO {
     // Remove uma música do banco de dados
     public void remove(Musica musica) {
         try {
-            PreparedStatement stmt = connection.prepareStatement("delete from musica where id_musica=?");
-            stmt.setInt(1, musica.getId());
+            PreparedStatement stmt = connection.prepareStatement("delete from musica where NOME_MUSICA=?");
+            stmt.setString(1, musica.getNome());
 
             stmt.execute();
             stmt.close();
